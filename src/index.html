@@ -7,19 +7,32 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body style="direction: ltr; min-height: 901px;" dir="ltr" spellcheck="false">
+  <!-- stars spread down the whole page, they scroll with the content -->
+  <div class="sky" aria-hidden="true">
+    <span class="star star-1"></span>
+    <span class="star star-2"></span>
+    <span class="star star-3"></span>
+    <span class="star star-4"></span>
+    <span class="star star-5"></span>
+    <span class="star star-6"></span>
+    <span class="star star-7"></span>
+    <span class="star star-8"></span>
+  </div>
+  
   <div class="container" id="top">
 
     <nav>
       <a href="#top">home</a> •
       <a href="#projects">projects</a> •
-      <a href="#experience">experience</a> •
+      <a href="#skills">skills</a> •
+      <a href="#experience">work experience</a> •
       <a href="#education">education</a> •
       <a href="#contact">contact</a>
     </nav>
 
     <div class="social-links">
-      <a href="#">github</a>
-      <a href="#">linkedin</a>
+      <a href="https://github.com/sbenf999">github</a>
+      <a href="https://www.linkedin.com/in/soma-benfell-839848380/">linkedin</a>
       <a href="mailto:you@example.com">email</a>
     </div>
 
@@ -47,18 +60,42 @@
       </li>
     </ul>
 
+<!-- skills -->
+    <h2 id="skills">Skills</h2>
+
+    <h3>Languages</h3>
+    <ul class="skill-list">
+      <li>Python</li>
+      <li>Java</li>
+      <li>C</li>
+      <li>C++</li>
+      <li>JavaScript</li>
+      <li>HTML / CSS</li>
+      <li>PHP</li>
+    </ul>
+
+    <h3>Tools</h3>
+    <ul class="skill-list">
+      <li>Git / GitHub</li>
+      <li>SQL</li>
+      <li>PostgreSQL</li>
+      <li>pgAdmin</li>
+      <li>Supabase</li>
+      <li>Android Studio</li>
+    </ul>
+
     <!-- experience -->
-    <h2 id="experience">Experience</h2>
+    <h2 id="experience">Work experience</h2>
     <ol class="timeline">
       <li class="current">
-        <strong>SPAR International Ltd</strong>
-        <span class="dates">Company · Aug 2026 – present</span>
+        <strong>Team lead</strong>
+        <span class="dates">SPAR International Ltd · Aug 2026 – present</span>
         <p><span style="font-family: inherit; font-size: var(--hcbe); white-space: pre-wrap; caret-color: rgba(0, 0, 0, 0.9);">Cashier and shop floor operations in a busy university environment </span></p>
       </li>
       <li>
-        <strong>Onestop Ltd</strong>
-        <span class="dates">Company · Nov 2023 – Aug 2026</span>
-        <p>Serving the local community</p>
+        <strong>Customer service assistant</strong>
+        <span class="dates">Onestop Ltd · Nov 2023 – Aug 2026</span>
+        <p>Served the local community as a cashier and shop floor worker</p>
       </li>
     </ol>
 

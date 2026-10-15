@@ -11,6 +11,10 @@
   --silver-light: #d6d6d6;
   --glow: rgba(110, 110, 110, 0.28);
 
+  /* colours for the background stars */
+  --star: #7a7a7a;
+  --star-glow: rgba(120, 120, 120, 0.35);
+
   /* keeps the page clear of the notch on phones */
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
@@ -28,6 +32,8 @@
     --silver-mid: #cfcfcf;
     --silver-light: #ffffff;
     --glow: rgba(225, 225, 225, 0.3);
+    --star: #ffffff;
+    --star-glow: rgba(255, 255, 255, 0.5);
   }
 }
 
@@ -41,6 +47,8 @@
   --silver-mid: #cfcfcf;
   --silver-light: #ffffff;
   --glow: rgba(225, 225, 225, 0.3);
+  --star: #ffffff;
+  --star-glow: rgba(255, 255, 255, 0.5);
 }
 
 /* ---------- basics ---------- */
@@ -55,6 +63,7 @@ html {
 }
 
 body {
+  position: relative;
   margin: 0;
   background: var(--bg);
   color: var(--text);
@@ -184,6 +193,29 @@ h2 {
   font-size: 0.9rem;
 }
 
+/* ---------- skills ---------- */
+h3 {
+  margin: 1.2rem 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.skill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.skill-list li {
+  padding: 0.2rem 0.7rem;
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
 /* ---------- timelines (experience + education) ---------- */
 .timeline {
   list-style: none;
@@ -306,6 +338,152 @@ footer p {
   margin: 0;
 }
 
+/* ---------- background stars ---------- */
+/* small stars spread down the whole page. The sky is as tall as the page
+   (body is position: relative), so the stars scroll with the content and
+   you run into new ones as you go down. They also drift slowly sideways. */
+.sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.star {
+  position: absolute;
+  top: var(--top);
+  left: 0;
+  width: var(--size);
+  height: var(--size);
+  opacity: 0;
+  filter: drop-shadow(0 0 3px var(--star-glow));
+  animation: drift var(--duration) linear infinite;
+  animation-delay: var(--delay);
+  will-change: transform;
+}
+
+/* the little four point star shape, with a slow twinkle */
+.star::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--star);
+  clip-path: polygon(50% 0, 57% 43%, 100% 50%, 57% 57%, 50% 100%, 43% 57%, 0 50%, 43% 43%);
+  animation: twinkle calc(var(--duration) / 20) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+
+@keyframes twinkle {
+  from {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* each star has its own height on the page, size, direction and speed */
+.star-1 {
+  --size: 9px;
+  --top: 5%;
+  --x0: -5vw;
+  --x1: 105vw;
+  --dy: 40px;
+  --duration: 120s;
+  --delay: -30s;
+}
+
+.star-2 {
+  --size: 6px;
+  --top: 17%;
+  --x0: 105vw;
+  --x1: -5vw;
+  --dy: -30px;
+  --duration: 150s;
+  --delay: -100s;
+}
+
+.star-3 {
+  --size: 9px;
+  --top: 27%;
+  --x0: -5vw;
+  --x1: 105vw;
+  --dy: 50px;
+  --duration: 105s;
+  --delay: -70s;
+}
+
+.star-4 {
+  --size: 6px;
+  --top: 41%;
+  --x0: 105vw;
+  --x1: -5vw;
+  --dy: -40px;
+  --duration: 135s;
+  --delay: -20s;
+}
+
+.star-5 {
+  --size: 9px;
+  --top: 53%;
+  --x0: -5vw;
+  --x1: 105vw;
+  --dy: 30px;
+  --duration: 115s;
+  --delay: -90s;
+}
+
+.star-6 {
+  --size: 6px;
+  --top: 66%;
+  --x0: 105vw;
+  --x1: -5vw;
+  --dy: 45px;
+  --duration: 145s;
+  --delay: -50s;
+}
+
+.star-7 {
+  --size: 9px;
+  --top: 77%;
+  --x0: -5vw;
+  --x1: 105vw;
+  --dy: -35px;
+  --duration: 125s;
+  --delay: -10s;
+}
+
+.star-8 {
+  --size: 6px;
+  --top: 91%;
+  --x0: 105vw;
+  --x1: -5vw;
+  --dy: 25px;
+  --duration: 110s;
+  --delay: -80s;
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(var(--x0), 0);
+    opacity: 0;
+  }
+  8%, 92% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(var(--x1), var(--dy));
+    opacity: 0;
+  }
+}
+
 /* turn off the name animation if the user prefers less motion */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -314,5 +492,9 @@ footer p {
 
   h1 {
     animation: none;
+  }
+
+  .sky {
+    display: none;
   }
 }
