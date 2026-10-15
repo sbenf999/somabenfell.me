@@ -1,0 +1,318 @@
+/* ---------- colours ---------- */
+:root {
+  --bg: #ffffff;
+  --text: #111111;
+  --muted: #6b6b6b;
+  --border: #e4e4e4;
+
+  /* silver colours for the name animation */
+  --silver-dark: #2f2f2f;
+  --silver-mid: #8d8d8d;
+  --silver-light: #d6d6d6;
+  --glow: rgba(110, 110, 110, 0.28);
+
+  /* keeps the page clear of the notch on phones */
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* dark mode, follows the device setting */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0c0c;
+    --text: #ededed;
+    --muted: #8c8c8c;
+    --border: #262626;
+    --silver-dark: #8a8a8a;
+    --silver-mid: #cfcfcf;
+    --silver-light: #ffffff;
+    --glow: rgba(225, 225, 225, 0.3);
+  }
+}
+
+/* the hosting page can also force dark mode with data-theme */
+:root[data-theme="dark"] {
+  --bg: #0c0c0c;
+  --text: #ededed;
+  --muted: #8c8c8c;
+  --border: #262626;
+  --silver-dark: #8a8a8a;
+  --silver-mid: #cfcfcf;
+  --silver-light: #ffffff;
+  --glow: rgba(225, 225, 225, 0.3);
+}
+
+/* ---------- basics ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.container {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.4rem 3rem;
+}
+
+a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 4px;
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+/* ---------- top of the page ---------- */
+nav {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: var(--text);
+}
+
+.social-links {
+  display: flex;
+  gap: 1.1rem;
+  margin: 2.2rem 0 1.6rem;
+  font-size: 0.95rem;
+}
+
+/* name with the silver shimmer */
+h1 {
+  margin: 0 0 1.1rem;
+  padding-bottom: 0.08em;
+  font-family: "Chakra Petch", ui-monospace, system-ui, sans-serif;
+  font-size: clamp(2.6rem, 10vw, 4rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+
+  background: linear-gradient(
+    100deg,
+    var(--silver-dark) 0%,
+    var(--silver-mid) 35%,
+    var(--silver-light) 50%,
+    var(--silver-mid) 65%,
+    var(--silver-dark) 100%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+
+  filter: drop-shadow(0 0 10px var(--glow));
+  animation: shimmer 7s ease-in-out infinite alternate, glow 5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes glow {
+  50% {
+    filter: drop-shadow(0 0 20px var(--glow));
+  }
+}
+
+h2 {
+  margin: 3rem 0 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* ---------- projects ---------- */
+.project-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.project-list li {
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.project-list li:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.project-list a {
+  font-weight: 500;
+}
+
+.tags {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- timelines (experience + education) ---------- */
+.timeline {
+  list-style: none;
+  margin: 0.4rem 0 0 0.35rem;
+  padding: 0 0 0 1.4rem;
+  border-left: 1px solid var(--border);
+}
+
+.timeline li {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.timeline li:last-child {
+  padding-bottom: 0;
+}
+
+/* the dot on the line */
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: calc(-1.4rem - 5px);
+  top: 0.55rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1.5px solid var(--muted);
+}
+
+.timeline li.current::before {
+  background: var(--text);
+  border-color: var(--text);
+}
+
+.timeline strong {
+  display: block;
+  font-weight: 500;
+}
+
+.dates {
+  display: block;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.timeline p {
+  margin: 0.3rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* ---------- contact form ---------- */
+form {
+  margin-top: 1.4rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+input,
+textarea {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.65rem 0.8rem;
+  font: inherit;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 0;
+}
+
+textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--text);
+}
+
+button {
+  padding: 0.65rem 1.3rem;
+  font-family: "Chakra Petch", system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--bg);
+  background: var(--text);
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+#form-status {
+  margin: 0.9rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- footer ---------- */
+footer {
+  margin-top: 4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+footer p {
+  margin: 0;
+}
+
+/* turn off the name animation if the user prefers less motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  h1 {
+    animation: none;
+  }
+}
