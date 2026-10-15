@@ -338,6 +338,18 @@ footer p {
   margin: 0;
 }
 
+/* ---------- 404 page ---------- */
+/* min-height so the stars have the whole screen to sit in */
+body.error-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.error-code {
+  margin-top: 3rem;
+  font-size: clamp(4.5rem, 20vw, 8rem);
+}
+
 /* ---------- background stars ---------- */
 /* small stars spread down the whole page. The sky is as tall as the page
    (body is position: relative), so the stars scroll with the content and

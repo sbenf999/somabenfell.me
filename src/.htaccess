@@ -1,0 +1,40 @@
+# ---------- one canonical address, always HTTPS ----------
+RewriteEngine On
+
+# www -> non-www
+RewriteCond %{HTTP_HOST} ^www\.somabenfell\.me$ [NC]
+RewriteRule ^(.*)$ https://somabenfell.me/$1 [R=301,L]
+
+# http -> https
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://somabenfell.me/$1 [R=301,L]
+
+# ---------- security headers ----------
+<IfModule mod_headers.c>
+  # start with Report-Only. Once nothing is blocked in the browser console,
+  # rename it to Content-Security-Policy
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'"
+
+  # short max-age while testing, then raise to 31536000 (1 year)
+  Header always set Strict-Transport-Security "max-age=300"
+
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always unset X-Powered-By
+</IfModule>
+
+# ---------- housekeeping ----------
+# no folder listings
+Options -Indexes
+
+# hide dotfiles (security.txt in /.well-known/ still works)
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# hide git folders if one ever gets uploaded
+RedirectMatch 404 /\.git
+
+# custom 404 page 
+ErrorDocument 404 /404.html
