@@ -1,9 +1,10 @@
 <?php
+// contact.php - receives the contact form and emails it to me
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception as MailException;
 
 header('Content-Type: application/json');
-
-// settings (recaptcha secret, my email address etc) live outside public_html
-$config = require __DIR__ . '/../private/config.php';
 
 // sends a JSON reply and stops the script
 function reply($status, $ok, $error = '') {
@@ -12,32 +13,20 @@ function reply($status, $ok, $error = '') {
     exit;
 }
 
-// checks the recaptcha token with google
-function recaptchaOk($token, $config) {
-    if ($token === '') {
-        return false;
-    }
+// if anything crashes, write the reason to the error log and send back
+// clean JSON instead of a blank 500 page
+set_exception_handler(function ($e) {
+    error_log('contact form: ' . $e->getMessage());
+    reply(500, false, 'Sorry, something went wrong on my end.');
+});
 
-    $ch = curl_init('https://www.google.com/recaptcha/api/siteverify');
-    curl_setopt_array($ch, [
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => http_build_query([
-            'secret' => $config['recaptcha_secret'],
-            'response' => $token,
-        ]),
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 5,
-    ]);
-    $result = curl_exec($ch);
-    curl_close($ch);
-
-    if ($result === false) {
-        return false;
-    }
-
-    $data = json_decode($result, true);
-    return !empty($data['success']) && ($data['hostname'] ?? '') === $config['hostname'];
+// settings (smtp login, my email address etc) live outside public_html
+$configFile = __DIR__ . '/../private/config.php';
+if (!is_file($configFile)) {
+    error_log('contact form: config file not found at ' . $configFile);
+    reply(500, false, 'Sorry, something went wrong on my end.');
 }
+$config = require $configFile;
 
 // simple rate limit: max 5 messages per hour from the same ip
 // only a hash of the ip is stored, not the ip itself
@@ -49,6 +38,9 @@ function tooManyRequests($ip, $config) {
     $limit = 5;
 
     $fp = fopen($file, 'c+');
+    if ($fp === false) {
+        throw new Exception('cannot open ' . $file . ' (does the folder exist and is it writable?)');
+    }
     flock($fp, LOCK_EX);
     $data = json_decode(stream_get_contents($fp), true) ?: [];
 
@@ -87,7 +79,6 @@ $email = trim($_POST['email'] ?? '');
 $message = trim($_POST['message'] ?? '');
 $honeypot = $_POST['website'] ?? '';
 $started = (int) ($_POST['started'] ?? 0);
-$token = $_POST['g-recaptcha-response'] ?? '';
 
 // honeypot filled in = bot. pretend it worked so it doesn't try again
 if ($honeypot !== '') {
@@ -116,28 +107,45 @@ if (tooManyRequests($_SERVER['REMOTE_ADDR'] ?? '', $config)) {
     reply(429, false, 'Too many messages, please try again later.');
 }
 
-if (!recaptchaOk($token, $config)) {
-    reply(400, false, 'Please complete the captcha.');
+// mail() is switched off on my host, so this sends through a real mailbox
+// over SMTP using PHPMailer (files are in private/phpmailer)
+$mailerDir = __DIR__ . '/../private/phpmailer/';
+if (!is_file($mailerDir . 'PHPMailer.php')) {
+    error_log('contact form: PHPMailer files not found in ' . $mailerDir);
+    reply(500, false, 'Sorry, something went wrong on my end.');
 }
+require_once $mailerDir . 'Exception.php';
+require_once $mailerDir . 'PHPMailer.php';
+require_once $mailerDir . 'SMTP.php';
 
-// build the email. plain text only, and no line breaks allowed in the name
-// because it goes in the subject line
+// no line breaks allowed in the name because it goes in the subject line
 $safeName = str_replace(["\r", "\n"], ' ', $name);
-$subject = mb_encode_mimeheader('Portfolio message from ' . $safeName, 'UTF-8');
 $body = "Name: $name\nEmail: $email\n\n$message";
 
-// sent from my own domain, and replying goes to the visitor
-$headers = [
-    'From' => $config['from'],
-    'Reply-To' => $email,
-    'Content-Type' => 'text/plain; charset=UTF-8',
-];
+$mail = new PHPMailer(true); // true = throw exceptions when something fails
 
-if (mail($config['to'], $subject, $body, $headers)) {
+try {
+    $mail->isSMTP();
+    $mail->Host = $config['smtp_host'];
+    $mail->SMTPAuth = true;
+    $mail->Username = $config['smtp_user'];
+    $mail->Password = $config['smtp_pass'];
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+    $mail->Port = 465;
+    $mail->CharSet = 'UTF-8';
+
+    // sent from my own mailbox, and replying goes to the visitor
+    $mail->setFrom($config['from'], 'Website contact form');
+    $mail->addAddress($config['to']);
+    $mail->addReplyTo($email, $safeName);
+
+    $mail->isHTML(false); // plain text only
+    $mail->Subject = 'Portfolio message from ' . $safeName;
+    $mail->Body = $body;
+
+    $mail->send();
     reply(200, true);
+} catch (MailException $e) {
+    error_log('contact form: ' . $mail->ErrorInfo);
+    reply(500, false, 'Sorry, the message could not be sent. Please try again later.');
 }
-
-error_log('contact form: mail() failed');
-reply(500, false, 'Sorry, the message could not be sent. Please try again later.');
-
-?>
