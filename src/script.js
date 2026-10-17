@@ -1,27 +1,41 @@
-// change this to your real email address
-const EMAIL = "you@example.com";
+const EMAIL = "hello@somabenfell.me";
 
 const form = document.getElementById("contact-form");
 const formStatus = document.getElementById("form-status");
+const submitButton = form.querySelector("button[type='submit']");
 
-// there's no backend, so the form opens the visitor's email app
-// with the message already filled in
-form.addEventListener("submit", function (event) {
+// remember when the page loaded, so the server can reject forms that were sent suspiciously fast
+form.elements["started"].value = Date.now();
+
+form.addEventListener("submit", async function (event) {
   event.preventDefault();
 
-  const data = new FormData(form);
-  const name = data.get("name");
-  const email = data.get("email");
-  const message = data.get("message");
+  submitButton.disabled = true;
+  formStatus.textContent = "Sending...";
 
-  const subject = "Portfolio message from " + name;
-  const body = "From: " + name + " (" + email + ")\n\n" + message;
+  try {
+    const response = await fetch("/contact.php", {
+      method: "POST",
+      body: new FormData(form)
+    });
 
-  window.location.href =
-    "mailto:" + EMAIL +
-    "?subject=" + encodeURIComponent(subject) +
-    "&body=" + encodeURIComponent(body);
+    // if the server sends back something that isn't JSON, treat it as an error
+    const result = await response.json().catch(function () {
+      return {};
+    });
 
-  formStatus.textContent =
-    "Opening your email app. If nothing happens, email " + EMAIL + " directly.";
+    if (response.ok && result.ok) {
+      form.reset();
+      form.elements["started"].value = Date.now();
+      formStatus.textContent = "Thanks, your message has been sent.";
+    } else {
+      formStatus.textContent =
+        result.error || "Something went wrong. Please try again.";
+    }
+  } catch (error) {
+    formStatus.textContent =
+      "Couldn't reach the server. You can email me at " + EMAIL + " instead.";
+  }
+
+  submitButton.disabled = false;
 });

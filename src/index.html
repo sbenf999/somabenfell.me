@@ -47,7 +47,7 @@
     <h2 id="projects">Projects</h2>
     <ul class="project-list">
       <li>
-        <a href="#">ChipIn</a>
+        <a href="https://github.com/sbenf999/ChipIn">ChipIn</a>
         <p class="tags">Javascript • Node & Express.js • PostgreSQL • Supabase</p>
         <br><p class="tags">A volunteer task and bounty platform built with Node.js and Express, backed by a 5-table PostgreSQL schema hosted remotely on SupaBase. Custom JWT logon authentication alongside profile customisation and an easy to use UI/UX.</p>
       </li>
@@ -127,16 +127,23 @@
 
     <form id="contact-form">
       <label>Name
-        <input type="text" name="name" required="">
+        <input type="text" name="name" required>
       </label>
       <label>Email
-        <input type="email" name="email" required="">
+        <input type="email" name="email" required>
       </label>
       <label>Message
-        <textarea name="message" rows="5" required=""></textarea>
+        <textarea name="message" rows="5" required></textarea>
       </label>
+      <div class="hp" aria-hidden="true">
+        <label>Website
+          <input type="text" name="website" tabindex="-1" autocomplete="off">
+        </label>
+      </div>
+      <input type="hidden" name="started" value="">
+ 
       <button type="submit">Send message</button>
-      <p id="form-status" role="status"><br></p>
+      <p id="form-status" role="status"></p>
     </form>
 
     <footer>

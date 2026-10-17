@@ -319,6 +319,20 @@ button:hover {
   opacity: 0.8;
 }
 
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* honeypot field, moved off screen so people never see it */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 #form-status {
   margin: 0.9rem 0 0;
   color: var(--muted);
