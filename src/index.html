@@ -125,7 +125,7 @@
       <a href="mailto:you@example.com">you@example.com</a>
     </p>
 
-    <form id="contact-form">
+    <form id="contact-form" method="post" action="/contact.php">
       <label>Name
         <input type="text" name="name" required>
       </label>
@@ -135,12 +135,15 @@
       <label>Message
         <textarea name="message" rows="5" required></textarea>
       </label>
+      <!-- honeypot: people never see this, bots tend to fill it in -->
       <div class="hp" aria-hidden="true">
         <label>Website
           <input type="text" name="website" tabindex="-1" autocomplete="off">
         </label>
       </div>
       <input type="hidden" name="started" value="">
+ 
+      <div class="g-recaptcha" data-sitekey="6LfmZ_QtAAAAANptdxoxHiMa2ZpDV3RUnTrM1k7K"></div>
  
       <button type="submit">Send message</button>
       <p id="form-status" role="status"></p>
@@ -151,8 +154,6 @@
     </footer>
 
   </div>
-
-  
-
-
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="script.js"></script>
 </body></html>
