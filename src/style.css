@@ -333,10 +333,30 @@ button:disabled {
   overflow: hidden;
 }
 
-#form-status {
-  margin: 0.9rem 0 0;
-  color: var(--muted);
-  font-size: 0.9rem;
+/* ---------- popup message ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 10;
+  max-width: min(90vw, 24rem);
+  padding: 0.7rem 1.1rem;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.95rem;
+  opacity: 0;
+  transform: translate(-50%, 1rem);
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.toast.error {
+  border-left: 4px solid #e5484d;
 }
 
 /* ---------- footer ---------- */
@@ -522,5 +542,9 @@ body.error-page {
 
   .sky {
     display: none;
+  }
+
+  .toast {
+    transition: none;
   }
 }
