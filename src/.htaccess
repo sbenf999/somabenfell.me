@@ -16,7 +16,7 @@ RewriteRule ^(.*)$ https://somabenfell.me/$1 [R=301,L]
   Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'"
 
   # short max-age while testing, then raise to 31536000 (1 year)
-  Header always set Strict-Transport-Security "max-age=86400"
+  Header always set Strict-Transport-Security "max-age=2592000"
 
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
